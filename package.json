@@ -1,0 +1,21 @@
+{
+  "name": "new_agent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env GEMINI_API_KEY=AIzaSyC3s1Y9nvpvJGrBueD1Xof0ZpOl9bZ8hto node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "express": "^5.1.0",
+    "openai": "^4.103.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

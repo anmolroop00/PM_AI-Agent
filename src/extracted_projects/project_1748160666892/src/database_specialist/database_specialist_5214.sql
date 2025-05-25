@@ -1,0 +1,1 @@
+SELECT * FROM comments WHERE post_id = 789 AND is_approved = TRUE ORDER BY created_at DESC; -- Replace 789 with the post's ID

@@ -1,0 +1,2 @@
+INSERT INTO posts (author_id, title, slug, content, excerpt, featured_image, is_published, published_at)
+    VALUES (1, 'My New Post', 'my-new-post', 'Content of my new post...', 'A short excerpt', 'image.jpg', TRUE, NOW());

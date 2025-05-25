@@ -1,0 +1,10 @@
+/* Example: Adjusting font size for mobile */
+    body {
+      font-size: 16px; /* Default font size */
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 18px; /* Larger font size on mobile */
+      }
+    }

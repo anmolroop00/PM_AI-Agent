@@ -1,0 +1,1 @@
+SELECT * FROM posts WHERE slug = 'your-post-slug';

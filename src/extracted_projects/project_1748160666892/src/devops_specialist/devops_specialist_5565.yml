@@ -1,0 +1,50 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE_FRONTEND: <YOUR_ECR_REPOSITORY>/frontend
+  DOCKER_IMAGE_BACKEND: <YOUR_ECR_REPOSITORY>/backend
+  AWS_REGION: <YOUR_AWS_REGION>
+  KUBE_NAMESPACE: default # Or your desired namespace
+
+build_frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "AWS" -p "$(aws ecr get-login-password --region $AWS_REGION)" <YOUR_AWS_ACCOUNT_ID>.dkr.ecr.$AWS_REGION.amazonaws.com
+  script:
+    - docker build -t $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHA -f frontend/Dockerfile frontend
+    - docker push $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHA
+  tags:
+    - docker
+
+build_backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "AWS" -p "$(aws ecr get-login-password --region $AWS_REGION)" <YOUR_AWS_ACCOUNT_ID>.dkr.ecr.$AWS_REGION.amazonaws.com
+  script:
+    - docker build -t $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHA -f backend/Dockerfile backend
+    - docker push $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHA
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  before_script:
+    - aws eks update-kubeconfig --region $AWS_REGION --name <YOUR_EKS_CLUSTER_NAME>
+  script:
+    - sed -i "s|<YOUR_ECR_REPOSITORY>/frontend:<TAG>|$DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHA|g" k8s/frontend-deployment.yaml
+    - sed -i "s|<YOUR_ECR_REPOSITORY>/backend:<TAG>|$DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHA|g" k8s/backend-deployment.yaml
+    - kubectl apply -f k8s/frontend-deployment.yaml -n $KUBE_NAMESPACE
+    - kubectl apply -f k8s/backend-deployment.yaml -n $KUBE_NAMESPACE
+  tags:
+    - kubernetes

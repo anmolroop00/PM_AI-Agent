@@ -1,0 +1,1 @@
+SELECT * FROM posts WHERE author_id = 123;  -- Replace 123 with the author's ID

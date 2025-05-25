@@ -1,0 +1,1 @@
+SELECT * FROM posts WHERE is_published = TRUE ORDER BY published_at DESC;

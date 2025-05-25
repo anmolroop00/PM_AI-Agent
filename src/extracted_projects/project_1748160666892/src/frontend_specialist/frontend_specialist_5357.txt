@@ -1,0 +1,59 @@
+import React, { useState, useEffect } from 'react';
+
+const PostForm = ({ onSubmit, onCancel, initialValues }) => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [author, setAuthor] = useState('');
+
+  useEffect(() => {
+    if (initialValues) {
+      setTitle(initialValues.title || '');
+      setContent(initialValues.content || '');
+      setAuthor(initialValues.author || '');
+    } else {
+      setTitle('');
+      setContent('');
+      setAuthor('');
+    }
+  }, [initialValues]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ title, content, author });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="title">Title:</label>
+        <input
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="content">Content:</label>
+        <textarea
+          id="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="author">Author:</label>
+        <input
+          type="text"
+          id="author"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
+      </div>
+      <button type="submit">Save</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
+    </form>
+  );
+};
+
+export default PostForm;

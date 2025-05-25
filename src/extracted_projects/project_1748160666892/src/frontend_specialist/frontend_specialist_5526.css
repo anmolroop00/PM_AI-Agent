@@ -1,0 +1,17 @@
+/* Example: Responsive layout using Flexbox */
+        .container {
+          display: flex;
+          flex-wrap: wrap; /* Allow items to wrap to the next line */
+          justify-content: space-between; /* Distribute items evenly */
+        }
+
+        .item {
+          width: calc(50% - 10px); /* Two items per row, with spacing */
+          margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+          .item {
+            width: 100%; /* One item per row on smaller screens */
+          }
+        }

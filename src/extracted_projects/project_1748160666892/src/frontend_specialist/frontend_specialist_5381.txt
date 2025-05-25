@@ -1,0 +1,19 @@
+blog-frontend/
+├── src/
+│   ├── components/
+│   │   ├── BlogPost.jsx
+│   │   ├── CategoryList.jsx
+│   │   ├── UserProfile.jsx
+│   │   └── Layout.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── PostDetails.jsx
+│   │   └── CategoryPosts.jsx
+│   ├── App.jsx
+│   ├── index.js
+│   └── App.css
+├── public/
+│   └── index.html
+├── package.json
+├── README.md
+└── .gitignore

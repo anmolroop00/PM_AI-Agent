@@ -1,0 +1,69 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_IMAGE_FRONTEND: your-dockerhub-username/frontend
+  DOCKER_IMAGE_BACKEND: your-dockerhub-username/backend
+  KUBE_NAMESPACE: default # Replace with your Kubernetes namespace
+
+build_frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - cd frontend
+    - docker build -t $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHA .
+    - docker push $DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHA
+  tags:
+    - docker
+
+build_backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - cd backend
+    - docker build -t $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHA .
+    - docker push $DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHA
+  tags:
+    - docker
+
+test:
+  stage: test
+  image: node:18-alpine
+  script:
+    - cd backend
+    - npm install
+    - npm test # Replace with your test command
+
+deploy_frontend:
+  stage: deploy
+  image: kubectl:latest
+  before_script:
+    - kubectl config use-context your-kubernetes-context # Replace with your context
+  script:
+    - kubectl set image deployment/frontend-deployment frontend=$DOCKER_IMAGE_FRONTEND:$CI_COMMIT_SHA -n $KUBE_NAMESPACE
+  tags:
+    - kubernetes
+  only:
+    - main
+
+deploy_backend:
+  stage: deploy
+  image: kubectl:latest
+  before_script:
+    - kubectl config use-context your-kubernetes-context # Replace with your context
+  script:
+    - kubectl set image deployment/backend-deployment backend=$DOCKER_IMAGE_BACKEND:$CI_COMMIT_SHA -n $KUBE_NAMESPACE
+  tags:
+    - kubernetes
+  only:
+    - main

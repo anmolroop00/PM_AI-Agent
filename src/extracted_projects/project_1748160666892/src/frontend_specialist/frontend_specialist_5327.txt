@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from 'react';
+import PostForm from './PostForm';
+
+const Posts = () => {
+  const [posts, setPosts] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+
+  useEffect(() => {
+    // Fetch posts from the backend API
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('/api/posts'); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPosts(data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const handleCreate = () => {
+    setSelectedPost(null);
+    setShowForm(true);
+  };
+
+  const handleEdit = (post) => {
+    setSelectedPost(post);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`/api/posts/${id}`, { method: 'DELETE' }); // Replace with your API endpoint
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setPosts(posts.filter((post) => post.id !== id));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+
+  const handleFormSubmit = async (postData) => {
+    try {
+      let response;
+      if (selectedPost) {
+        // Update existing post
+        response = await fetch(`/api/posts/${selectedPost.id}`, {
+          method: 'PUT', // or PATCH
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postData),
+        });
+      } else {
+        // Create new post
+        response = await fetch('/api/posts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postData),
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const newPost = await response.json();
+
+      if (selectedPost) {
+        // Update the post in the state
+        setPosts(posts.map(post => post.id === selectedPost.id ? newPost : post));
+      } else {
+        // Add the new post to the state
+        setPosts([...posts, newPost]);
+      }
+
+      setShowForm(false);
+      setSelectedPost(null);
+
+    } catch (error) {
+      console.error('Error saving post:', error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Posts Management</h2>
+      <button onClick={handleCreate}>Create New Post</button>
+
+      {showForm && (
+        <PostForm
+          onSubmit={handleFormSubmit}
+          onCancel={() => setShowForm(false)}
+          initialValues={selectedPost}
+        />
+      )}
+
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>
+            {post.title} - {post.author}
+            <button onClick={() => handleEdit(post)}>Edit</button>
+            <button onClick={() => handleDelete(post.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Posts;

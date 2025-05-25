@@ -1,0 +1,19 @@
+admin-panel/
+├── src/
+│   ├── components/
+│   │   ├── Dashboard.jsx
+│   │   ├── Posts.jsx
+│   │   ├── Users.jsx
+│   │   ├── Settings.jsx
+│   │   ├── Login.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── PrivateRoute.jsx
+│   │   ├── PostForm.jsx
+│   │   ├── UserForm.jsx 
+│   ├── context/
+│   │   ├── AuthContext.jsx
+│   ├── App.jsx
+│   ├── index.jsx
+│   ├── styles.css
+├── package.json
+├── webpack.config.js (Optional - if you need custom webpack config)

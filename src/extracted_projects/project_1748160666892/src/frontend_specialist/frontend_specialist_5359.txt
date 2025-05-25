@@ -1,0 +1,60 @@
+import React, { useState, useEffect } from 'react';
+
+const UserForm = ({ onSubmit, onCancel, initialValues }) => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    if (initialValues) {
+      setUsername(initialValues.username || '');
+      setEmail(initialValues.email || '');
+      setRole(initialValues.role || '');
+    } else {
+      setUsername('');
+      setEmail('');
+      setRole('');
+    }
+  }, [initialValues]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ username, email, role });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="role">Role:</label>
+        <input
+          type="text"
+          id="role"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        />
+      </div>
+      <button type="submit">Save</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
+    </form>
+  );
+};
+
+export default UserForm;

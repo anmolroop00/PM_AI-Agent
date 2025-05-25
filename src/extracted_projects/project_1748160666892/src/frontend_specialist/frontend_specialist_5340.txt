@@ -1,0 +1,82 @@
+import React, { useState, useEffect } from 'react';
+
+const Settings = () => {
+  const [settings, setSettings] = useState({
+    siteName: '',
+    description: '',
+  });
+
+  useEffect(() => {
+    // Fetch settings from the backend API
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings'); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSettings({ ...settings, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/settings', { // Replace with your API endpoint
+        method: 'PUT', // or PATCH
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log('Settings updated successfully!');
+    } catch (error) {
+      console.error('Error updating settings:', error);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Website Settings</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="siteName">Site Name:</label>
+          <input
+            type="text"
+            id="siteName"
+            name="siteName"
+            value={settings.siteName}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="description">Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            value={settings.description}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit">Save Settings</button>
+      </form>
+    </div>
+  );
+};
+
+export default Settings;
